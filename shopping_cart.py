@@ -33,17 +33,25 @@ checkout_start_at = datetime.datetime.now()
 product_ids=[]
 
 while True:
-    product_id = input("Hello! Please input a product identifier or type DONE if there are no more: ")
-    if product_id=="DONE":
+    product_id = (input("Hello! Please input a product identifier or type DONE if there are no more: "))
+    while True:
+        try:
+            product_id = int(product_id)
+            break
+        except ValueError:
+            if product_id=="DONE" or product_id=="done" or product_id=="Done":
+                break
+            print("Product IDs must be numbers!")
+            product_id = (input("Hello! Please input a product identifier or type DONE if there are no more: "))
+    if product_id=="DONE" or product_id=="done" or product_id=="Done":
         break
-    else:
+    elif int(product_id)>0 and int(product_id)<21:
         product_ids.append(product_id)
+    else:
+        print("We only have products labeled from 1-20..")
 
 
 
-
-
-#product_ids = [1,8,6,16,6]
 
 print("--------------------")
 print("BT21 GROCERY SHOP")
@@ -79,3 +87,63 @@ print("--------------------")
 print("Thank you for shopping with us!")
 print("Have a fantastic day and please come again!")
 print("--------------------")
+
+
+
+
+
+
+
+
+#product_ids = [1,8,6,16,6]
+receipt = "receipt.txt"
+
+with open(receipt, "w") as file:
+    file.write("--------------------")
+    file.write("\n")
+    file.write("BT21 GROCERY SHOP")
+    file.write("\n")
+    file.write("--------------------")
+    file.write("\n")
+    file.write("Phone Number: 718-789-7897")
+    file.write("\n")
+    file.write("Website: github.com/timho890000")
+    file.write("\n")
+    file.write("Checkout Date and Time: "+ str(checkout_start_at.strftime("%A, %B %d, %Y at %I:%M%p"))) #import datetime. look at guide to figure out all the formats in the string format.
+    file.write("\n")
+    file.write("\n")
+    file.write("Shopping Cart Items:")
+    file.write("\n")
+    def matching_product(product_identifier):
+        products_list = [p for p in products if p["id"] == product_identifier] #makes a list of p in products that have product ID as ID. (will only have one item in this case)
+        return products_list[0]
+    raw_total = 0
+    file.write("\n")
+    for pid in product_ids:
+        product = matching_product(int(pid))
+        raw_total = raw_total + product["price"] # could use raw_total += product["id"]
+        price_usd = "(${0:.2f})".format(product["price"])
+        file.write("++" + product["name"] + price_usd)
+        file.write("\n")
+
+    raw_total_price = "(${0:.2f})".format(raw_total)
+    tax_amount = "(${0:.2f})".format(raw_total*.08875)
+    total_price = "(${0:.2f})".format(raw_total*1.08875)
+    file.write("--------------------")
+    file.write("\n")
+    file.write("Subtotal: "+ raw_total_price)
+    file.write("\n")
+    file.write("NYC Tax: "+tax_amount)
+    file.write("\n")
+    file.write("Grand Total: "+total_price)
+    file.write("\n")
+    file.write(" ")
+    file.write("\n")
+    file.write("--------------------")
+    file.write("\n")
+    file.write("Thank you for shopping with us!")
+    file.write("\n")
+    file.write("Have a fantastic day and please come again!")
+    file.write("\n")
+    file.write("--------------------")
+    file.write("\n")
